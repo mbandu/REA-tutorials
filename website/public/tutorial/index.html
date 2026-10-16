@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>REA Tutorial — Learn Reverse Engineering with Evidence</title>
+    <meta name="description" content="A visual, beginner-friendly tutorial for using REA to inspect software, trace behavior and verify evidence." />
+    <meta name="robots" content="noindex" />
+    <script src="../assets/theme.js"></script>
+    <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/styles.css" />
+    <script src="../assets/main.js" defer></script>
+    <style>
+      .tutorial-shell { max-width: 1180px; margin: 0 auto; padding: 4rem 1.75rem 6rem; }
+      .tutorial-kicker { color: var(--accent); font-size: .78rem; font-weight: 750; letter-spacing: .13em; text-transform: uppercase; }
+      .tutorial-hero { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 3rem; align-items: center; margin-bottom: 4rem; }
+      .tutorial-hero h1 { max-width: 9ch; margin-top: .7rem; margin-bottom: 1rem; font-size: clamp(3.4rem, 8vw, 7rem); }
+      .tutorial-hero .lede { max-width: 34rem; font-size: 1.15rem; color: var(--muted); }
+      .tutorial-hero-art, .tutorial-figure { position: relative; overflow: hidden; border: 1px solid var(--line); border-radius: 18px; background: var(--soft); box-shadow: 0 22px 60px rgb(32 37 43 / 12%); }
+      .tutorial-hero-art img, .tutorial-figure img { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
+      .tutorial-callout { position: absolute; left: 1.25rem; bottom: 1.25rem; max-width: 14rem; padding: .8rem 1rem; border: 1px solid rgb(255 255 255 / 55%); border-radius: 10px; background: rgb(20 26 34 / 78%); color: white; backdrop-filter: blur(10px); }
+      .tutorial-callout strong { display: block; margin-bottom: .15rem; font-size: .9rem; }
+      .tutorial-callout span { display: block; font-size: .78rem; line-height: 1.4; color: #dce8f6; }
+      .tutorial-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.5rem; }
+      .tutorial-button { display: inline-flex; align-items: center; min-height: 44px; padding: .65rem 1rem; border: 1px solid var(--accent); border-radius: 7px; background: var(--accent); color: white; font-weight: 700; text-decoration: none; }
+      .tutorial-button.secondary { background: transparent; color: var(--accent); }
+      .tutorial-section { padding: 4rem 0; border-top: 1px solid var(--line); }
+      .tutorial-section > p, .tutorial-section > h2 { max-width: 42rem; }
+      .tutorial-section h2 { font-size: clamp(2rem, 4vw, 3.4rem); }
+      .tutorial-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 2rem 0; }
+      .tutorial-card { padding: 1.25rem; border: 1px solid var(--line); border-radius: 12px; background: var(--soft); }
+      .tutorial-card .number { color: var(--accent); font: 700 1.8rem var(--font-mono); }
+      .tutorial-card h3 { margin-top: .5rem; }
+      .tutorial-flow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .75rem; margin: 2rem 0; }
+      .tutorial-flow-step { padding: 1rem; border-top: 3px solid var(--accent); background: var(--soft); }
+      .tutorial-flow-step b { display: block; margin-bottom: .3rem; }
+      .tutorial-figure { margin: 2rem 0 1rem; }
+      .tutorial-figure-label { position: absolute; top: 1rem; left: 1rem; padding: .35rem .6rem; border-radius: 999px; background: rgb(255 255 255 / 88%); color: #20252b; font: 700 .72rem var(--font-mono); }
+      .tutorial-caption { color: var(--muted); font-size: .88rem; }
+      .tutorial-columns { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2rem; align-items: start; }
+      .tutorial-terminal { position: relative; margin: 1.5rem 0; padding: 1.2rem 1.25rem; border-radius: 10px; background: #20252b; color: #f4f6f8; overflow: auto; }
+      .tutorial-terminal pre { margin: 0; white-space: pre-wrap; }
+      .tutorial-terminal .copy-button { position: absolute; top: .7rem; right: .7rem; }
+      .tutorial-note { padding: 1rem 1.2rem; border-left: 4px solid #c7832e; background: var(--soft); }
+      .tutorial-tabs { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1.25rem 0; }
+      .tutorial-tabs button { min-height: 40px; padding: .5rem .8rem; border: 1px solid var(--line); border-radius: 999px; background: var(--page); color: var(--muted); }
+      .tutorial-tabs button[aria-pressed="true"] { border-color: var(--accent); background: var(--accent); color: white; }
+      .tutorial-step-panel { display: none; padding: 1.25rem; border: 1px solid var(--line); border-radius: 10px; background: var(--soft); }
+      .tutorial-step-panel.is-active { display: block; }
+      .tutorial-step-panel code { color: var(--accent); }
+      .tutorial-footer { margin-top: 3rem; padding: 1.5rem; border: 1px solid var(--line); border-radius: 12px; background: var(--soft); }
+      @media (max-width: 800px) { .tutorial-hero, .tutorial-columns { grid-template-columns: 1fr; gap: 1.5rem; } .tutorial-hero h1 { max-width: none; } .tutorial-grid, .tutorial-flow { grid-template-columns: 1fr 1fr; } }
+      @media (max-width: 520px) { .tutorial-shell { padding-inline: 1rem; } .tutorial-grid, .tutorial-flow { grid-template-columns: 1fr; } .tutorial-hero-art img, .tutorial-figure img { aspect-ratio: 4 / 3; } }
+    </style>
+  </head>
+  <body id="top">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="../" aria-label="REA home"><span class="brand-name">REA</span><span class="brand-caption">Reverse Engineer Anything</span></a>
+        <nav class="navigation" aria-label="Main navigation"><a href="../get-started/">Get started</a><a href="../showcase/">Showcases</a><a href="../guides/">Guides</a><a href="../faq/">FAQ</a></nav>
+        <div class="header-social"><button class="theme-toggle" type="button" data-theme-toggle hidden aria-label="Toggle theme">◐</button><a class="nav-github" href="https://github.com/morluto/rea" aria-label="REA on GitHub">GitHub</a></div>
+      </div>
+    </header>
+    <main id="main" class="tutorial-shell">
+      <section class="tutorial-hero" aria-labelledby="tutorial-title">
+        <div>
+          <p class="tutorial-kicker">A visual REA tutorial</p>
+          <h1 id="tutorial-title">Ask better questions of software.</h1>
+          <p class="lede">REA helps your coding agent inspect local apps, binaries and runtime behavior while preserving the evidence behind each answer.</p>
+          <div class="tutorial-actions"><a class="tutorial-button" href="#first-question">Start the tutorial</a><a class="tutorial-button secondary" href="../get-started/">Read setup details</a></div>
+        </div>
+        <figure class="tutorial-hero-art"><img src="../assets/tutorial/rea-overview.png" alt="Photorealistic workbench showing a laptop, magnifying glass, circuit board and evidence cards arranged as an investigation path" /><figcaption class="tutorial-callout"><strong>Observation → interpretation → check</strong><span>REA keeps those steps distinguishable.</span></figcaption></figure>
+      </section>
+
+      <section class="tutorial-section" id="first-question" aria-labelledby="question-title">
+        <p class="tutorial-kicker">01 · Start with a behavior</p>
+        <h2 id="question-title">Turn curiosity into a precise question.</h2>
+        <p>Instead of asking “What is this app?”, ask something you can verify: <em>Where does this app create its CSV export?</em> A focused question gives the agent a route through the target and gives you a claim to check.</p>
+        <div class="tutorial-grid">
+          <article class="tutorial-card"><span class="number">01</span><h3>Name the target</h3><p>Use a local path, archive, package or an already-open browser page.</p></article>
+          <article class="tutorial-card"><span class="number">02</span><h3>Name the behavior</h3><p>Choose one action, calculation, file write, request or function.</p></article>
+          <article class="tutorial-card"><span class="number">03</span><h3>Name the check</h3><p>Decide what would convince you: source, bytes, output or a repeatable result.</p></article>
+        </div>
+        <div class="tutorial-flow" aria-label="The REA investigation loop"><div class="tutorial-flow-step"><b>Question</b><span>What happens?</span></div><div class="tutorial-flow-step"><b>Inspect</b><span>What does the target show?</span></div><div class="tutorial-flow-step"><b>Trace</b><span>Which path connects it?</span></div><div class="tutorial-flow-step"><b>Verify</b><span>What evidence supports it?</span></div></div>
+      </section>
+
+      <section class="tutorial-section" id="inspect" aria-labelledby="inspect-title">
+        <p class="tutorial-kicker">02 · Inspect without guessing</p>
+        <div class="tutorial-columns"><div><h2 id="inspect-title">Use the smallest REA workflow that answers the question.</h2><p>For a JavaScript or Electron tree, start with the application analyzer. It inventories modules, derives relationships and returns Evidence you can follow up on. For a native executable, choose a configured provider and inspect the relevant function or strings.</p><div class="tutorial-terminal"><button class="copy-button" type="button" data-copy="inspect-command">Copy</button><pre id="inspect-command"><code>npx -y rea-agents@6.5.0 analyze-javascript-application ./notes-example --json</code></pre></div><p class="tutorial-note"><strong>Important:</strong> static analysis describes what the artifact contains. It does not prove that code executed.</p></div><figure class="tutorial-figure"><img src="../assets/tutorial/rea-static-analysis.png" alt="Photorealistic analyst desk showing a local application artifact separated from a laptop with abstract module blocks and function nodes" /><figcaption class="tutorial-figure-label">artifact → modules → candidate path</figcaption></figure></div>
+        <p class="tutorial-caption">The exact command depends on the target. REA’s CLI and MCP workflows share the same application semantics and Evidence contracts.</p>
+      </section>
+
+      <section class="tutorial-section" id="evidence" aria-labelledby="evidence-title">
+        <p class="tutorial-kicker">03 · Read the answer as evidence</p>
+        <div class="tutorial-columns"><figure class="tutorial-figure"><img src="../assets/tutorial/rea-evidence-trace.png" alt="Photorealistic research table with evidence cards, timestamp strips and a highlighted thread connecting an observation to a result" /><figcaption class="tutorial-figure-label">evidence is the thread</figcaption></figure><div><h2 id="evidence-title">Separate what REA observed from what you infer.</h2><p>An Evidence record preserves the target identity, operation, source facts, limitations and uncertainty. Treat a returned path as an observed relationship; treat “this is the export flow” as an interpretation that still needs a check.</p><div class="tutorial-tabs" data-step-comparison><button type="button" data-select-step="observation" aria-pressed="true">Observation</button><button type="button" data-select-step="interpretation" aria-pressed="false">Interpretation</button><button type="button" data-select-step="check" aria-pressed="false">Verification</button></div><div class="tutorial-step-panel is-active" data-step="observation"><strong>Observation</strong><p>REA found a renderer call leading to a preload API and an IPC channel.</p></div><div class="tutorial-step-panel" data-step="interpretation"><strong>Interpretation</strong><p>The channel is a candidate route for the export behavior. Keep “candidate” visible until the writer is confirmed.</p></div><div class="tutorial-step-panel" data-step="check"><strong>Verification</strong><p>Read the receiving handler and run the small reconstruction with one changed input. Report what was and was not checked.</p></div></div></div>
+      </section>
+
+      <section class="tutorial-section" id="agent" aria-labelledby="agent-title">
+        <p class="tutorial-kicker">04 · Ask your coding agent</p>
+        <h2 id="agent-title">Give the agent a question, boundary and expected evidence.</h2>
+        <p>REA is most useful when the prompt tells the agent what to inspect and how to keep the answer honest.</p>
+        <div class="tutorial-terminal"><button class="copy-button" type="button" data-copy="agent-prompt">Copy</button><pre id="agent-prompt"><code>Use REA to inspect ./notes-example.
+Question: where is the CSV export written?
+Trace the button through renderer, preload and main process.
+Return: the relevant Evidence IDs, source paths, IPC channel, writer call,
+and any unknowns. Do not claim runtime behavior from static evidence alone.</code></pre></div>
+        <details><summary>What to look for in the answer</summary><ul><li>Which target and digest were actually inspected.</li><li>Which provider or workflow produced the result.</li><li>Source locations and the exact relationship between them.</li><li>Coverage limits, failed branches and unresolved identity.</li></ul></details>
+        <div class="tutorial-footer"><strong>Next step:</strong> follow the <a href="../first-investigation/">first investigation</a> for a complete Notes export exercise, or browse the <a href="../guides/">worked guides</a> for native, JavaScript and browser targets.</div>
+      </section>
+    </main>
+    <footer class="site-footer"><div class="container footer-inner"><p>REA · Reverse Engineer Anything</p><div class="footer-links"><a href="../guides/">Guides</a><a href="https://github.com/morluto/rea">Source</a><a href="https://github.com/morluto/rea/blob/main/LICENSE">MIT license</a></div></div></footer>
+    <p class="sr-only" id="copy-status" role="status" aria-live="polite"></p><a class="back-to-top" href="#top" aria-label="Back to top"><span aria-hidden="true">↑</span> Top</a>
+  </body>
+</html>
